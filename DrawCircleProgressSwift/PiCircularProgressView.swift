@@ -17,7 +17,7 @@ extension PiCircularProgressView{
 }
 
 
-class PiCircularProgressView: UIView {
+class PiCircularProgressView: UIButton {
 
     /*
     // Only override draw() if you perform custom drawing.
@@ -125,7 +125,10 @@ class PiCircularProgressView: UIView {
 
 
 
-    var font : UIFont!
+    //var font : UIFont!
+
+
+
 
 
     var _progressFillColor : UIColor!
@@ -167,6 +170,9 @@ class PiCircularProgressView: UIView {
 
 
 
+    var centerCircle : UIView! = nil;
+    var selfCenter : CGPoint! = nil;
+
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -177,19 +183,86 @@ class PiCircularProgressView: UIView {
 
         self.thicknessRatio = 0.37
 
-        self.innerBackgroundColor = UIColor.gray
-        self.outerBackgroundColor = UIColor.green
+        self.innerBackgroundColor = UIColor.clear
+        self.outerBackgroundColor = UIColor.init(white: 0.5, alpha: 0.5)
+        //self.outerBackgroundColor = UIColor.red
 
         self.textColor = UIColor.black
-        self.font = UIFont.systemFont(ofSize: 10)
-        self.progressFillColor = UIColor.darkGray
+        self.progressFillColor = UIColor.blue
 
 
-        self.progressTopGradientColor = UIColor.init(red: 15.0/255.0, green: 97/255.0, blue: 189/255.0, alpha: 1.0)
-        
+        self.progressTopGradientColor = UIColor.green
         self.progressBottomGradientColor = UIColor.init(red: 114/255.0, green: 174/255.0, blue: 235/255.0, alpha: 1.0)
 
+        self.progressBottomGradientColor = UIColor.red
+
         self.backgroundColor = UIColor.clear
+        //121   40
+        //74    54
+        self.selfCenter = CGPoint.init(x: frame.minX + frame.width/2, y: frame.minY + frame.height/2)
+        self.center = self.selfCenter;
+    }
+
+
+    func makeCenterView(){
+
+        let widthOfCenter = frame.size.width/74.0*54.0
+        let heightOfCenter = frame.size.width/74.0*54.0
+
+
+        let centerView = UIView.init(frame: .zero);
+        self.superview?.addSubview(centerView);centerView.layer.cornerRadius = widthOfCenter/2;
+        centerView.backgroundColor = UIColor.init(white: 0.8, alpha: 0.8);
+
+        centerView.center = CGPoint.init(x: self.selfCenter.x, y: self.selfCenter.y);
+        centerView.isUserInteractionEnabled = false;
+
+        centerView.bounds = CGRect.init(x: 0, y: 0, width: widthOfCenter, height: heightOfCenter);
+        self.centerCircle = centerView;
+
+    }
+
+    
+
+    func rescureAction(){
+
+        UIView.animate(withDuration: 0.3, animations: {
+
+            self.bounds = CGRect(x:0, y: 0, width: 74.0, height: 74.0)
+
+            let widthOfCenter = 54
+            let heightOfCenter = 54
+
+            self.centerCircle.bounds = CGRect.init(x: 0, y: 0, width: widthOfCenter, height: heightOfCenter);
+            self.centerCircle.layer.cornerRadius = self.centerCircle.bounds.width/2
+
+            
+        }) { (finish) in
+            
+            
+        }
+
+    }
+
+    func beginChange(){
+
+        UIView.animate(withDuration: 0.1, animations: { 
+
+
+
+            self.bounds = CGRect(x:0, y: 0, width: 121.0, height: 121.0)
+
+            let widthOfCenter = 40.0
+            let heightOfCenter = 40.0
+
+            self.centerCircle.bounds = CGRect.init(x: 0, y: 0, width: widthOfCenter, height: heightOfCenter);
+            self.centerCircle.layer.cornerRadius = self.centerCircle.bounds.width/2;
+
+
+        }) { (finish) in
+
+
+        }
 
     }
 
@@ -249,21 +322,18 @@ class PiCircularProgressView: UIView {
 
         if showText != nil && textColor != nil {
 
-            let progressString = "\(progress*100.0)"
-//            let fontSize = radius
-//            let font = self.font.withSize(fontSize)
-            
-            let fontSize : CGFloat = 10
-            
-            var expectedSize = (progressString as NSString).size(attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: fontSize)]);
+//            let strUse = String.init(format: "%.02f", progress*100.0)
+//            let progressString = strUse;let fontSize : CGFloat = 10;
+//            var expectedSize = (progressString as NSString).size(attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: fontSize)]);
+//
+//            expectedSize = NSString(string: progressString).size(attributes: [NSFontAttributeName:UIFont.systemFont(ofSize: fontSize)])
+//
+//            let origin = CGPoint.init(x: center.x - expectedSize.width / 2.0, y: center.y - expectedSize.height / 2.0)
+//
+//            textColor.setFill()
+//
+//            NSString(string: progressString).draw(at: origin, withAttributes: [NSFontAttributeName:UIFont.systemFont(ofSize: fontSize)])
 
-            expectedSize = NSString(string: progressString).size(attributes: [NSFontAttributeName:font])
-
-            let origin = CGPoint.init(x: center.x - expectedSize.width / 2.0, y: center.y - expectedSize.height / 2.0)
-
-            textColor.setFill()
-
-            NSString(string: progressString).draw(at: origin, withAttributes: [NSFontAttributeName:font])
         }
 
         let path = UIBezierPath()
